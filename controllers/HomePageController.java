@@ -10,4 +10,5 @@ public class HomePageController {
   public String index() {
     return "Greetings from jukebox!";
   }
+
 }
