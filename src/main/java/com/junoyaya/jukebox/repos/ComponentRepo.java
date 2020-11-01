@@ -1,6 +1,6 @@
 package com.junoyaya.jukebox.repos;
 
-import java.util.List;
+import java.util.Optional;
 
 import com.junoyaya.jukebox.entities.HardwareComponent;
 
@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 
 public interface ComponentRepo extends JpaRepository<HardwareComponent, String>, JpaSpecificationExecutor<HardwareComponent>, QueryByExampleExecutor<HardwareComponent> {
-  List<HardwareComponent> findByName(String name);
+  Optional<HardwareComponent> findByName(String name);
 }

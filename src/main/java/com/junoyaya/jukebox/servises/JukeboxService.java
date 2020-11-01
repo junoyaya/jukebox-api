@@ -1,5 +1,6 @@
 package com.junoyaya.jukebox.servises;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,7 +57,8 @@ public class JukeboxService {
     if (requiredHardwareComponents.isEmpty()) {
       return false;
     }
-    return requiredHardwareComponents.stream().allMatch(requiedComponent -> juke.getHardwareComponents().contains(requiedComponent));
+    List<String> ids = juke.getHardwareComponents().stream().map(HardwareComponent::getId).collect(Collectors.toList());
+    return requiredHardwareComponents.stream().allMatch(requiedComponent -> ids.contains(requiedComponent.getId()));
   }
 
   @Transactional
@@ -64,8 +66,12 @@ public class JukeboxService {
     return jukeRepo.findAll(pageable);
   }
 
+  @Transactional
   public Page<Juke> findJukesMatchesModel(String model, Pageable pageable) {
-    List<Juke> finByModel = jukeRepo.findByModel(model);
-    return listToPage(pageable, finByModel);
+    Optional<Juke> finByModel = jukeRepo.findByModel(model);
+    if (finByModel.isEmpty()) {
+      throw new ResponseErrorException(ErrorCode.NOT_EXIST, "Juke does not exist with model: " + model);
+    }
+    return listToPage(pageable, Arrays.asList(finByModel.get()));
   }
 }

@@ -3,6 +3,7 @@ package com.junoyaya.jukebox;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -10,6 +11,8 @@ import javax.transaction.Transactional;
 import com.junoyaya.jukebox.entities.HardwareComponent;
 import com.junoyaya.jukebox.entities.Juke;
 import com.junoyaya.jukebox.entities.Setting;
+import com.junoyaya.jukebox.error.ErrorCode;
+import com.junoyaya.jukebox.error.ResponseErrorException;
 import com.junoyaya.jukebox.repos.ComponentRepo;
 import com.junoyaya.jukebox.repos.EquipmentSettingRepo;
 import com.junoyaya.jukebox.repos.JukeRepo;
@@ -79,7 +82,6 @@ public class DemoData {
         addComponentsForSetting(setting, "amplifier");
       }
     });
-
   }
 
   private void addJukeComponents() {
@@ -98,24 +100,26 @@ public class DemoData {
   private void addComponentsForSetting(Setting setting, String componentName) {
     List<HardwareComponent> hardwareComponents = setting.getHardwareComponents();
     List<String> ids = hardwareComponents.stream().map(HardwareComponent::getId).collect(Collectors.toList());
-    List<HardwareComponent> findByName = componentRepo.findByName(componentName);
-    findByName.forEach(c -> {
-      if (!ids.contains(c.getId())) {
-        hardwareComponents.add(c);
-      }
-    });
+    Optional<HardwareComponent> findByName = componentRepo.findByName(componentName);
+    if (findByName.isEmpty()) {
+      throw new ResponseErrorException(ErrorCode.NOT_EXIST, "Hardware Component does not exist with name: " + componentName);
+    }
+    if (!ids.contains(findByName.get().getId())) {
+      hardwareComponents.add(findByName.get());
+    }
   }
 
   private void addComponentsForJuke(Juke juke, List<String> componentNames) {
     List<HardwareComponent> hardwareComponents = juke.getHardwareComponents();
     List<String> ids = hardwareComponents.stream().map(HardwareComponent::getId).collect(Collectors.toList());
     componentNames.forEach(componentName -> {
-      List<HardwareComponent> findByName = componentRepo.findByName(componentName);
-      findByName.forEach(c -> {
-        if (!ids.contains(c.getId())) {
-          hardwareComponents.add(c);
-        }
-      });
+      Optional<HardwareComponent> findByName = componentRepo.findByName(componentName);
+      if (findByName.isEmpty()) {
+        throw new ResponseErrorException(ErrorCode.NOT_EXIST, "Hardware Component does not exist with name: " + componentName);
+      }
+      if (!ids.contains(findByName.get().getId())) {
+        hardwareComponents.add(findByName.get());
+      }
     });
   }
 
