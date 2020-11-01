@@ -3,6 +3,7 @@ package com.junoyaya.jukebox;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -96,15 +97,25 @@ public class DemoData {
 
   private void addComponentsForSetting(Setting setting, String componentName) {
     List<HardwareComponent> hardwareComponents = setting.getHardwareComponents();
+    List<String> ids = hardwareComponents.stream().map(HardwareComponent::getId).collect(Collectors.toList());
     List<HardwareComponent> findByName = componentRepo.findByName(componentName);
-    hardwareComponents.addAll(findByName);
+    findByName.forEach(c -> {
+      if (!ids.contains(c.getId())) {
+        hardwareComponents.add(c);
+      }
+    });
   }
 
   private void addComponentsForJuke(Juke juke, List<String> componentNames) {
     List<HardwareComponent> hardwareComponents = juke.getHardwareComponents();
+    List<String> ids = hardwareComponents.stream().map(HardwareComponent::getId).collect(Collectors.toList());
     componentNames.forEach(componentName -> {
       List<HardwareComponent> findByName = componentRepo.findByName(componentName);
-      hardwareComponents.addAll(findByName);
+      findByName.forEach(c -> {
+        if (!ids.contains(c.getId())) {
+          hardwareComponents.add(c);
+        }
+      });
     });
   }
 
