@@ -1,6 +1,6 @@
 package com.junoyaya.jukebox.controllers;
 
-import com.junoyaya.jukebox.dtos.JukeDto;
+import com.junoyaya.jukebox.entities.Juke;
 import com.junoyaya.jukebox.servises.JukeboxService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,34 +8,30 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class JukeboxController {
   @Autowired
-  private JukeboxService JukeboxService;
+  private JukeboxService jukeboxService;
   @Autowired
-  private PagedResourcesAssembler<JukeDto> jukePagedResourcesAssembler;
+  private PagedResourcesAssembler<Juke> jukePagedResourcesAssembler;
 
   @GetMapping("/api/jukes")
   @ResponseBody
-  public PagedModel<EntityModel<JukeDto>> findAllJukes(Pageable pageable) {
-    return jukePagedResourcesAssembler.toModel(JukeboxService.findAllJukes());
-  }
-
-  @GetMapping("/api/jukes")
-  @ResponseBody
-  public PagedModel<EntityModel<JukeDto>> findJukesMatchesName(@RequestParam(name = "name ") String name, Pageable pageable) {
-    return jukePagedResourcesAssembler.toModel(JukeboxService.findJukesMatchesName(name));
-  }
-
-  @GetMapping("/api/jukes")
-  @ResponseBody
-  public PagedModel<EntityModel<JukeDto>> findJukesMatchesSetting(@RequestParam(name = "settingId ") String settingId, Pageable pageable) {
-    return jukePagedResourcesAssembler.toModel(JukeboxService.findJukesMatchesSetting(settingId));
+  public PagedModel<EntityModel<Juke>> findJukesMatchesSetting(@RequestParam(required = false, name = "settingId") String settingId,
+      @RequestParam(required = false, name = "model") String model,
+      Pageable pageable) {
+    if (settingId != null) {
+      return jukePagedResourcesAssembler.toModel(jukeboxService.findJukesMatchesSetting(settingId, pageable));
+    }
+    if (model != null) {
+      return jukePagedResourcesAssembler.toModel(jukeboxService.findJukesMatchesModel(model, pageable));
+    }
+    return jukePagedResourcesAssembler.toModel(jukeboxService.findAllJukes(pageable));
   }
 
 }

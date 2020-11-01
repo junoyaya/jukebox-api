@@ -7,6 +7,8 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -21,20 +23,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuditableEntity {
-
+  @JsonIgnore
   @CreatedBy
   private String createdBy;
-
+  @JsonIgnore
   @LastModifiedBy
   private String lastModifiedBy;
-
+  @JsonIgnore
   @CreatedDate
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdDate;
-
+  @JsonIgnore
   @LastModifiedDate
   @Temporal(TemporalType.TIMESTAMP)
   private Date lastModifiedDate;
-
+  @JsonIgnore
   private Boolean archived;
 }

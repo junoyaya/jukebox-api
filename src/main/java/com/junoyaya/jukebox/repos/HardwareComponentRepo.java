@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 
-public interface ComponentRepo extends JpaRepository<HardwareComponent, String>, JpaSpecificationExecutor<HardwareComponent>, QueryByExampleExecutor<HardwareComponent> {
+public interface HardwareComponentRepo
+    extends JpaRepository<HardwareComponent, String>, JpaSpecificationExecutor<HardwareComponent>, QueryByExampleExecutor<HardwareComponent> {
   List<HardwareComponent> findByName(String name);
 }

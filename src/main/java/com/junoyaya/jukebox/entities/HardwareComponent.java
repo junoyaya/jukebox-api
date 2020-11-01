@@ -2,12 +2,12 @@ package com.junoyaya.jukebox.entities;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -21,8 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class EquipmentSetting extends AuditableEntity {
-
+public class HardwareComponent extends AuditableEntity {
   @Id
   @GeneratedValue(generator = "uuid")
   @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -30,7 +29,12 @@ public class EquipmentSetting extends AuditableEntity {
 
   private String name;
 
-  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "equipmentSetting")
-  private List<Component> components;
+  @JsonIgnore
+  @ManyToMany(mappedBy = "hardwareComponents")
+  private List<Juke> jukes;
+
+  @JsonIgnore
+  @ManyToMany(mappedBy = "hardwareComponents")
+  private List<Setting> settings;
 
 }

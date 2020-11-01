@@ -1,10 +1,14 @@
 package com.junoyaya.jukebox.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -27,7 +31,11 @@ public class Juke extends AuditableEntity {
 
   private String model;
 
-  private List<Component> components;
-
+  @ManyToMany
+  @JoinTable(
+      name = "jukeComponent",
+      joinColumns = @JoinColumn(name = "jukeId"),
+      inverseJoinColumns = @JoinColumn(name = "hardwareComponentId"))
+  private List<HardwareComponent> hardwareComponents = new ArrayList<>();
 
 }

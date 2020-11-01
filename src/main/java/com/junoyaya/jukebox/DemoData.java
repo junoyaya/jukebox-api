@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.junoyaya.jukebox.entities.Component;
-import com.junoyaya.jukebox.entities.EquipmentSetting;
+import javax.transaction.Transactional;
+
+import com.junoyaya.jukebox.entities.HardwareComponent;
 import com.junoyaya.jukebox.entities.Juke;
+import com.junoyaya.jukebox.entities.Setting;
 import com.junoyaya.jukebox.repos.ComponentRepo;
 import com.junoyaya.jukebox.repos.EquipmentSettingRepo;
 import com.junoyaya.jukebox.repos.JukeRepo;
@@ -14,7 +16,9 @@ import com.junoyaya.jukebox.repos.JukeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DemoData {
   @Autowired
   private ComponentRepo componentRepo;
@@ -27,9 +31,10 @@ public class DemoData {
 
 
   @EventListener
+  @Transactional
   public void appReady(ApplicationReadyEvent event) {
     if (componentRepo.count() == 0) {
-      List<Component> components = new ArrayList<>();
+      List<HardwareComponent> components = new ArrayList<>();
       addComponent(components, "led_panel");
       addComponent(components, "amplifier");
       addComponent(components, "camera");
@@ -42,45 +47,83 @@ public class DemoData {
     }
 
     if (settingRepo.count() == 0) {
-      List<EquipmentSetting> settings = new ArrayList<>();
-      addSetting(settings, "currency", componentRepo.findByName("money_receiver"));
-      addSetting(settings, "animation_type", componentRepo.findByName("led_panel"));
-      addSetting(settings, "outdoor", componentRepo.findByName("amplifier"));
+      List<Setting> settings = new ArrayList<>();
+      addSetting(settings, "currency");
+      addSetting(settings, "animation_type");
+      addSetting(settings, "outdoor");
 
       settingRepo.saveAll(settings);
     }
 
     if (jukeRepo.count() == 0) {
       List<Juke> jukes = new ArrayList<>();
-      addJuke(jukes, "fusion", Arrays.asList("money_receiver", "led_panel", "amplifier"));
-      addJuke(jukes, "mars", Arrays.asList("money_receiver", "touchscreen", "led_panel"));
-      addJuke(jukes, "moon", Arrays.asList("touchscreen", "amplifier"));
+      addJuke(jukes, "fusion");
+      addJuke(jukes, "mars");
+      addJuke(jukes, "moon");
       jukeRepo.saveAll(jukes);
     }
+
+    addJukeComponents();
+    addSettingComponents();
   }
 
+  private void addSettingComponents() {
+    List<Setting> settings = settingRepo.findAll();
+    settings.forEach(setting -> {
+      if (setting.getName().equalsIgnoreCase("currency")) {
+        addComponentsForSetting(setting, "money_receiver");
+      } else if (setting.getName().equalsIgnoreCase("animation_type")) {
+        addComponentsForSetting(setting, "led_panel");
+      } else if (setting.getName().equalsIgnoreCase("outdoor")) {
+        addComponentsForSetting(setting, "amplifier");
+      }
+    });
 
-  private void addJuke(List<Juke> jukes, String model, List<String> componentNames) {
-    List<Component> componentsInJuke = new ArrayList<>();
-    componentNames.forEach(componentName -> componentsInJuke.addAll(componentRepo.findByName(componentName)));
+  }
+
+  private void addJukeComponents() {
+    List<Juke> jukes = jukeRepo.findAll();
+    jukes.forEach(juke -> {
+      if (juke.getModel().equalsIgnoreCase("fusion")) {
+        addComponentsForJuke(juke, Arrays.asList("money_receiver", "led_panel", "amplifier"));
+      } else if (juke.getModel().equalsIgnoreCase("mars")) {
+        addComponentsForJuke(juke, Arrays.asList("money_receiver", "touchscreen", "led_panel"));
+      } else if (juke.getModel().equalsIgnoreCase("moon")) {
+        addComponentsForJuke(juke, Arrays.asList("touchscreen", "amplifier"));
+      }
+    });
+  }
+
+  private void addComponentsForSetting(Setting setting, String componentName) {
+    List<HardwareComponent> hardwareComponents = setting.getHardwareComponents();
+    List<HardwareComponent> findByName = componentRepo.findByName(componentName);
+    hardwareComponents.addAll(findByName);
+  }
+
+  private void addComponentsForJuke(Juke juke, List<String> componentNames) {
+    List<HardwareComponent> hardwareComponents = juke.getHardwareComponents();
+    componentNames.forEach(componentName -> {
+      List<HardwareComponent> findByName = componentRepo.findByName(componentName);
+      hardwareComponents.addAll(findByName);
+    });
+  }
+
+  private void addJuke(List<Juke> jukes, String model) {
     Juke juke = new Juke();
     juke.setModel(model);
-    juke.setComponents(componentsInJuke);
     jukes.add(juke);
-
   }
 
 
-  private void addSetting(List<EquipmentSetting> settings, String name, List<Component> components) {
-    EquipmentSetting setting = new EquipmentSetting();
+  private void addSetting(List<Setting> settings, String name) {
+    Setting setting = new Setting();
     setting.setName(name);
-    setting.setComponents(components);
     settings.add(setting);
   }
 
 
-  private void addComponent(List<Component> components, String name) {
-    Component component = new Component();
+  private void addComponent(List<HardwareComponent> components, String name) {
+    HardwareComponent component = new HardwareComponent();
     component.setName(name);
     components.add(component);
   }
