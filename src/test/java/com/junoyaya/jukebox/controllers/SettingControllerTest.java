@@ -4,8 +4,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.junoyaya.jukebox.entities.Juke;
-import com.junoyaya.jukebox.servises.JukeboxService;
+import com.junoyaya.jukebox.entities.Setting;
+import com.junoyaya.jukebox.servises.SettingService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,17 +29,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs(outputDir = "target/snippets")
-public class JukeboxControllerTest {
+public class SettingControllerTest {
   @Autowired
   private MockMvc mockMvc;
   @Autowired
-  private JukeboxController controller;
+  private SettingController controller;
   @MockBean
-  private JukeboxService service;
+  private SettingService service;
   @MockBean
-  private PagedResourcesAssembler<Juke> jukePagedResourcesAssembler;
+  private PagedResourcesAssembler<Setting> settingPagedResourcesAssembler;
   @Mock
-  private Page<Juke> jukes;
+  private Page<Setting> settings;
 
   @Before
   public void setUp() {
@@ -47,24 +47,12 @@ public class JukeboxControllerTest {
         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
         .build();
 
-    Mockito.when(service.findAllJukes(Mockito.any(Pageable.class))).thenReturn(jukes);
-    Mockito.when(service.findJukesMatchesModel(Mockito.any(String.class), Mockito.any(Pageable.class))).thenReturn(jukes);
-    Mockito.when(service.findJukesMatchesSetting(Mockito.any(String.class), Mockito.any(Pageable.class))).thenReturn(jukes);
+    Mockito.when(service.findAllSettings(Mockito.any(Pageable.class))).thenReturn(settings);
   }
 
   @Test
-  public void whenGetAllJukes_thenOk() throws Exception {
-    mockMvc.perform(get("/api/jukes")).andDo(print()).andExpect(status().isOk());
+  public void whenGetAllSettings_thenOk() throws Exception {
+    mockMvc.perform(get("/api/settings")).andDo(print()).andExpect(status().isOk());
     // .andDo(document("juke"));
-  }
-
-  @Test
-  public void whenGetJukesWithModel_thenOk() throws Exception {
-    mockMvc.perform(get("/api/jukes").param("model", "mars")).andExpect(status().isOk());
-  }
-
-  @Test
-  public void whenGetJukesWitSetting_thenOk() throws Exception {
-    mockMvc.perform(get("/api/jukes").param("settingId", "testId")).andExpect(status().isOk());
   }
 }

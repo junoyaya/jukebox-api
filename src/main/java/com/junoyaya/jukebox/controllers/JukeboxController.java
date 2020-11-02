@@ -20,6 +20,12 @@ public class JukeboxController {
   @Autowired
   private PagedResourcesAssembler<Juke> jukePagedResourcesAssembler;
 
+  // @Autowired
+  // public JukeboxController(JukeboxService jukeboxService, PagedResourcesAssembler<Juke> jukePagedResourcesAssembler) {
+  // this.jukeboxService = jukeboxService;
+  // this.jukePagedResourcesAssembler = jukePagedResourcesAssembler;
+  // }
+
   @GetMapping("/api/jukes")
   @ResponseBody
   public PagedModel<EntityModel<Juke>> findJukesMatchesSetting(@RequestParam(required = false, name = "settingId") String settingId,
