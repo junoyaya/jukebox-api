@@ -3,14 +3,24 @@
 This is an example output for a service running at http://localhost:8080:
 
 == Curl request
+----
 include::{snippets}/juke/http-request.adoc[]
+----
+----
 include::{snippets}/setting/http-request.adoc[]
+----
 
 == Request Parameter
+----
 include::{snippets}/juke-model/request-parameters.adoc[]
+----
+----
 include::{snippets}/juke-setting/request-parameters.adoc[]
+----
 
 == Curl response
+----
 include::{snippets}/juke/http-response.adoc[]
+----
 
 As you can see the format is very simple, and in fact you always get the same message.
