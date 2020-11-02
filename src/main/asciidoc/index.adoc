@@ -1,6 +1,6 @@
 = Getting Started With Spring REST Docs
 
-This is an example output for a service running at http://localhost:8080:
+This is an example output for a service running at http://localhost:10010:
 
 == Curl request
 ----
@@ -22,5 +22,3 @@ include::{snippets}/juke-setting/request-parameters.adoc[]
 ----
 include::{snippets}/juke/http-response.adoc[]
 ----
-
-As you can see the format is very simple, and in fact you always get the same message.
