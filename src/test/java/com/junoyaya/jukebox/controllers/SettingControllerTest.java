@@ -45,7 +45,7 @@ public class SettingControllerTest {
   @Mock
   private Page<Setting> settings;
   @Rule
-  public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
+  public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
   @Before
   public void setUp() {

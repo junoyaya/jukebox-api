@@ -1,16 +1,15 @@
-= Getting Started With Spring REST Docs
+= JukeBox API Docs
 
-This is an example output for a service running at http://localhost:10010:
+This is an documentation for a service running at http://localhost:8080:
 
-== Curl request
+== Juke endpoints
+
+=== Curl request
 ----
 include::{snippets}/juke/http-request.adoc[]
 ----
-----
-include::{snippets}/setting/http-request.adoc[]
-----
 
-== Request Parameter
+=== Request Parameter
 ----
 include::{snippets}/juke-model/request-parameters.adoc[]
 ----
@@ -18,7 +17,31 @@ include::{snippets}/juke-model/request-parameters.adoc[]
 include::{snippets}/juke-setting/request-parameters.adoc[]
 ----
 
-== Curl response
+== Setting endpoints
+
+=== Curl request
 ----
-include::{snippets}/juke/http-response.adoc[]
+include::{snippets}/setting/http-request.adoc[]
 ----
+
+== HTTP status codes
+
+|===
+| Status code | Usage
+
+| `200 OK`
+| The request completed successfully
+
+| `201 Created`
+| A new resource has been created successfully. The resource's URI is available from the response's
+`Location` header
+
+| `204 No Content`
+| An update to an existing resource has been applied successfully
+
+| `400 Bad Request`
+| The request was malformed. The response body will include an error providing further information
+
+| `404 Not Found`
+| The requested resource did not exist
+|===

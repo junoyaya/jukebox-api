@@ -46,7 +46,7 @@ public class JukeboxControllerTest {
   private Page<Juke> jukes;
 
   @Rule
-  public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
+  public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
   @Before
   public void setUp() {
