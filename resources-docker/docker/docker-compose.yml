@@ -1,0 +1,41 @@
+version: '3.3'
+
+volumes:
+  mysql_data:
+    driver: local
+
+services:
+  jukebox-db:
+    image: mysql:5.7
+    volumes:
+        - ./mysql_data:/var/lib/mysql3
+    environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: jukebox
+        MYSQL_USER: root
+        MYSQL_PASSWORD: root
+    networks:
+      jukebox:
+        aliases:
+          - jukebox-db
+  jukebox:
+    image: devops.hq1.junoyaya.net/jukebox:0.0.1-snapshot
+    hostname: jukebox
+    ports:
+      - 10010:10010
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://jukebox-db:3306/realestate?createDatabaseIfNotExist=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=junoyaya
+      - SPRING_DATASOURCE_PASSWORD=junoyaya
+    depends_on:
+       - jukebox-db
+    command: ["-c", "/wait-for.sh jukebox-db:3306 && java -jar /app.jar"]
+    entrypoint: ["/bin/sh"]
+    networks:
+      jukebox:
+        aliases:
+          - jukebox
+
+networks:
+  jukebox:
+    driver: bridge
